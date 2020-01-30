@@ -76,7 +76,7 @@ public class School
      * Adds the total money in the school
      * @param moneyEarned the money that is supposed to be added
      */
-    public static void updateTotalMoneyEarned(int moneyEarned)
+    public static void updateTotalMoneyEarned(double moneyEarned)
     {
         totalMoneyEarned += moneyEarned;
     }

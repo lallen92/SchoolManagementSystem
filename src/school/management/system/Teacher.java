@@ -10,19 +10,19 @@ public class Teacher
     private  String firstName;
     private double salary;
     private int salaryEarned;
-    private int school;
+    private final String school;
 
     /**
      *  To create a new teacher object by initializing
      *  @param firstName name of the student
      * @param salary salary of the student
      */
-    public Teacher(String firstName, double salary, int school){
+    public Teacher(String firstName, double salary){
         this.id = 0;
         this.firstName = firstName;
         this.salary = salary;
         this.salaryEarned = 0;
-        this.school = school;
+        this.school = "ITB";
     }
 
     public Integer getId()
@@ -41,7 +41,7 @@ public class Teacher
         return salary;
     }
 
-    public int getSchool()
+    public String getSchool()
     {
         return school;
     }

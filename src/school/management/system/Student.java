@@ -10,22 +10,20 @@ public class Student
     private int id;
     private String name;
     private int grade;
-    private int feesPaid;
-    private int feesTotal;
+    private double feesPaid;
+    private double feesTotal;
 
     /**
      *  To create a new student by initializing
      *  Fees for every student is $30,000
      *  Fees paid initially is 0
-     *  @param id uniquely identify the student
      *  @param name name of the student
      *  @param grade grade of the student
      */
 
-     public Student(int id, String name, int grade){
-         this.feesPaid = 0;
-         this.feesTotal = 30000;
-         this.id = id;
+     public Student(String name, int grade, double feePayment){
+         this.feesPaid = feePayment;
+         this.feesTotal = 10000;
          this.name = name;
          this.grade = grade;
      }
@@ -45,7 +43,7 @@ public class Student
      * Used to keep updating the fees paid
      * @param fees - The amount of fees paid by the student.
      */
-    public void payFees(int fees){
+    public void payFees(double fees){
         feesPaid += fees;
         School.updateTotalMoneyEarned(feesPaid);
     }
@@ -66,12 +64,12 @@ public class Student
         return grade;
     }
 
-    public int getFeesPaid()
+    public double getFeesPaid()
     {
         return feesPaid;
     }
 
-    public int getFeesTotal()
+    public double getFeesTotal()
     {
         return feesTotal;
     }
@@ -80,7 +78,7 @@ public class Student
      *
      * @return the remaining fees
      */
-    public int getRemainingFees(){
+    public double getRemainingFees(){
         return feesTotal - feesPaid;
     }
 }

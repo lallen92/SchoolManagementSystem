@@ -11,6 +11,7 @@ public class Main
 {
     public static final String INSERT_TEACHER_SQL_QUERY  = "INSERT INTO TEACHERS(teacherId, name, Salary, school) VALUES(?,?,?,?)";
     public static final String SELECT_TEACHERS_SQL_QUERY = "SELECT * FROM teachers";
+    public static final String INSERT_STUDENT_SQL_QUERY  = "INSERT INTO STUDENTS(studentId, Name, grade, fees_paid, fees_total) VALUES(?,?,?,?,?)";
 
     public static void main(String[] args) throws SQLException
     {
@@ -21,25 +22,11 @@ public class Main
                 .append("For 'Student Administration' please the number: 2,\n")
                 .append("For 'Financial Administration', please press the number: 3\n")
                 .append("To Exit', please press the number: 4").toString();
-        int numberEntered;
-        int inputChoice = -1;
+        int inputChoice;
+        int maxSize = 4;
 
         System.out.println(welcomeMessage);
-
-        while (inputChoice == -1)
-        {
-            try
-            {
-                System.out.println(optionsMessage);
-                Scanner input = new Scanner(System.in);
-                numberEntered = input.nextInt();
-                inputChoice = selectOption(numberEntered, 4);
-            }
-            catch (InputMismatchException e)
-            {
-                System.out.println("Invalid entry, please enter a valid option!\n");
-            }
-        }
+        inputChoice= getChoice(optionsMessage, maxSize);
         switch (inputChoice)
         {
             case 1:
@@ -48,6 +35,7 @@ public class Main
                 break;
             case 2:
                 System.out.println("--------Student Administration--------");
+                studentAdmin();
                 break;
             case 3:
                 System.out.println("--------Financial Administration--------");
@@ -55,7 +43,66 @@ public class Main
             case 4:
                 System.exit(0);
         }
+    }
 
+
+    private static void studentAdmin() throws SQLException
+    {
+        int inputChoiceStudent;
+        final String studentsMessage = new StringBuilder()
+                .append("To add a new student, please enter the Number: 1\n")
+                .append("To get a list off all existing students, please enter the Number: 2,\n")
+                .append("To Exit', please press the number: 3").toString();
+        int maxSize = 3;
+        String studentName;
+        int studentGrade;
+        double feePayment;
+
+        inputChoiceStudent = getChoice(studentsMessage, maxSize);
+        switch (inputChoiceStudent)
+        {
+            case 1:
+                System.out.println("--------Add New Student--------");
+                Scanner input = new Scanner(System.in);
+                System.out.println("Please enter their name: \n");
+                studentName = input.next();
+                System.out.println("Please enter their grade: \n");
+                input = new Scanner(System.in);
+                studentGrade = input.nextInt();
+                System.out.println("Please enter a fee payment amount: \n");
+                input = new Scanner(System.in);
+                feePayment = input.nextInt();
+                Student student = new Student(studentName, studentGrade, feePayment);
+                insertNewStudent(student);
+                break;
+            case 2:
+                System.out.println("--------List All Teachers--------");
+                queryAllTeachers();
+                break;
+            case 3:
+                System.exit(0);
+        }
+    }
+
+    private static int getChoice(String Message, int maxSize)
+    {
+        int numberEntered;
+        int inputChoice = -1;
+        while (inputChoice == -1)
+        {
+            try
+            {
+                System.out.println(Message);
+                Scanner input = new Scanner(System.in);
+                numberEntered = input.nextInt();
+                inputChoice= selectOption(numberEntered, maxSize);
+            }
+            catch (InputMismatchException e)
+            {
+                System.out.println("Invalid entry, please enter a valid option!\n");
+            }
+        }
+        return inputChoice;
     }
 
     private static void teacherAdmin() throws SQLException
@@ -66,8 +113,8 @@ public class Main
                 .append("To get a list off all existing teachers, please enter the Number: 2,\n")
                 .append("To Exit', please press the number: 3").toString();
         int numberEntered;
-        int maxSize = 0;
-        double teachersalary;
+        int maxSize = 2;
+        double teacherSalary;
         String teacherName;
 
         while (inputChoiceTeacher == -1)
@@ -77,7 +124,7 @@ public class Main
                 System.out.println(teachersMessage);
                 Scanner input = new Scanner(System.in);
                 numberEntered = input.nextInt();
-                inputChoiceTeacher = selectOption(numberEntered, maxSize=2);
+                inputChoiceTeacher = selectOption(numberEntered, maxSize);
             }
             catch (InputMismatchException e)
             {
@@ -93,8 +140,8 @@ public class Main
                 teacherName = input.next();
                 System.out.println("Please enter their salary: \n");
                 input = new Scanner(System.in);
-                teachersalary = input.nextDouble();
-                Teacher teacher = new Teacher(teacherName, teachersalary, 10);
+                teacherSalary = input.nextDouble();
+                Teacher teacher = new Teacher(teacherName, teacherSalary);
                 insertNewTeacher(teacher);
                 break;
             case 2:
@@ -153,10 +200,49 @@ public class Main
             ps.setInt( 1, T.getId());
             ps.setString( 2, T.getName());
             ps.setDouble( 3, T.getSalary());
-            ps.setInt( 4, T.getSchool());
+            ps.setString( 4, T.getSchool());
 
             ps.execute();
             System.out.println( "insertPerson => " + ps.toString() );
+            con.commit();
+        }
+        catch ( SQLException e )
+        {
+            if ( con != null )
+            {
+                con.rollback();
+            }
+            throw e;
+        }
+        finally
+        {
+            JdbcMySQLHelper.closePreparedStatement(ps);
+            JdbcMySQLHelper.closeConnection(con);
+        }
+    }
+
+    private static void insertNewStudent(Student S) throws SQLException
+    {
+        Connection con = null;
+        PreparedStatement ps = null;
+        try
+        {
+            con = JdbcMySQLHelper.getConnection();
+            if ( con == null )
+            {
+                System.out.println( "Error getting the connection. Please check if the DB server is running" );
+                return;
+            }
+            con.setAutoCommit( false );
+            ps = con.prepareStatement(INSERT_STUDENT_SQL_QUERY);
+            ps.setInt( 1, S.getId());
+            ps.setString( 2, S.getName());
+            ps.setDouble( 3, S.getGrade());
+            ps.setDouble( 4, S.getFeesPaid());
+            ps.setDouble( 5, S.getFeesTotal());
+
+            ps.execute();
+            System.out.println( "insertStudent => " + ps.toString() );
             con.commit();
         }
         catch ( SQLException e )
