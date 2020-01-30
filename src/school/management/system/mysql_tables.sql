@@ -1,0 +1,10 @@
+CREATE DATABASE schoolManagementSystem;
+USE schoolManagementSystem;
+CREATE TABLE SCHOOL(schoolId BIGINT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100),
+	total_money_earned DOUBLE(40,2), total_money_spent DOUBLE(40,2));
+
+CREATE TABLE TEACHERS(teacherId BIGINT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100),
+	Salary DOUBLE(40,2), school BIGINT);
+
+CREATE TABLE STUDENTS(studentId BIGINT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100),
+    grade BIGINT, fees_paid DOUBLE(40,2), fees_total DOUBLE(40,2));#, school BIGINT

@@ -7,54 +7,45 @@ package school.management.system;
 public class Teacher
 {
     private int id;
-    private  String name;
-    private int salary;
+    private  String firstName;
+    private double salary;
     private int salaryEarned;
+    private int school;
 
     /**
      *  To create a new teacher object by initializing
-     *  @param id uniquely identify the student
-     *  @param name name of the student
-     *  @param salary salary of the student
+     *  @param firstName name of the student
+     * @param salary salary of the student
      */
-    public Teacher(int id, String name, int salary){
-        this.id = id;
-        this.name = name;
+    public Teacher(String firstName, double salary, int school){
+        this.id = 0;
+        this.firstName = firstName;
         this.salary = salary;
         this.salaryEarned = 0;
+        this.school = school;
     }
 
-    /**
-     *
-     * @return the teachers id
-     */
-    public int getId()
+    public Integer getId()
     {
         return id;
     }
 
-    /**
-     *
-     * @return the teachers name
-     */
     public String getName()
     {
-        return name;
+        return firstName;
     }
 
-    /**
-     *
-     * @return the teachers salary
-     */
-    public int getSalary()
+
+    public double getSalary()
     {
         return salary;
     }
 
-    /**
-     *
-     * @param salary - Set the salary
-     */
+    public int getSchool()
+    {
+        return school;
+    }
+
     public void setSalary(int salary){
         this.salary = salary;
     }

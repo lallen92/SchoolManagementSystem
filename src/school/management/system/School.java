@@ -23,8 +23,8 @@ public class School
     {
         this.teachers = teachers;
         this.students = students;
-        this.totalMoneyEarned = 0;
-        this.totalMoneySpent = 0;
+        totalMoneyEarned = 0;
+        totalMoneySpent = 0;
     }
 
     /**
