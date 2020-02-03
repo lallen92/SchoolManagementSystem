@@ -1,9 +1,6 @@
 package school.management.system;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -12,6 +9,10 @@ public class Main
     public static final String INSERT_TEACHER_SQL_QUERY  = "INSERT INTO TEACHERS(teacherId, name, Salary, school) VALUES(?,?,?,?)";
     public static final String SELECT_TEACHERS_SQL_QUERY = "SELECT * FROM teachers";
     public static final String INSERT_STUDENT_SQL_QUERY  = "INSERT INTO STUDENTS(studentId, Name, grade, fees_paid, fees_total) VALUES(?,?,?,?,?)";
+    public static final String SELECT_STUDENTS_SQL_QUERY = "SELECT * FROM students";
+    public static final String SELECT_FINANCE_SQL_QUERY  = "SELECT * FROM school";
+    public static final String UPDATE_SCHOOL_TOTAL_SPENT = "UPDATE schoolmanagementsystem.school SET total_money_spent = (SELECT sum(salary) FROM schoolmanagementsystem.teachers) where schoolId = 1;";
+    public static final String UPDATE_SCHOOL_TOTAL_EARNT = "UPDATE schoolmanagementsystem.school SET total_money_earned = (SELECT sum(fees_paid) FROM schoolmanagementsystem.students) where schoolId = 1;";
 
     public static void main(String[] args) throws SQLException
     {
@@ -39,6 +40,7 @@ public class Main
                 break;
             case 3:
                 System.out.println("--------Financial Administration--------");
+                queryAll(SELECT_FINANCE_SQL_QUERY);
                 break;
             case 4:
                 System.exit(0);
@@ -76,8 +78,8 @@ public class Main
                 insertNewStudent(student);
                 break;
             case 2:
-                System.out.println("--------List All Teachers--------");
-                queryAllTeachers();
+                System.out.println("--------List All Students--------");
+                queryAll(SELECT_STUDENTS_SQL_QUERY);
                 break;
             case 3:
                 System.exit(0);
@@ -146,15 +148,14 @@ public class Main
                 break;
             case 2:
                 System.out.println("--------List All Teachers--------");
-                queryAllTeachers();
-                break;
+                queryAll(SELECT_TEACHERS_SQL_QUERY);
             case 3:
                 System.exit(0);
         }
 
     }
 
-    private static void queryAllTeachers()
+    private static void queryAll(String selectSqlQuery)
     {
         Connection con;
         PreparedStatement ps;
@@ -167,15 +168,20 @@ public class Main
                 return;
             }
             con.setAutoCommit(false);
-            ps = con.prepareStatement(SELECT_TEACHERS_SQL_QUERY);
+            ps = con.prepareStatement(selectSqlQuery);
             ResultSet rs = ps.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
 
             while (rs.next())
             {
-                System.out.print(rs.getInt(1));
-                System.out.print(": ");
-                System.out.println(rs.getString(2));
+                for(int i = 1 ; i <= columnsNumber; i++)
+                {
+                    System.out.print(rs.getString(i) + " "); //Print one element of a row
+                }
+                System.out.println();
             }
+
         }
         catch (SQLException e)
         {
@@ -204,6 +210,10 @@ public class Main
 
             ps.execute();
             System.out.println( "insertPerson => " + ps.toString() );
+            con.commit();
+
+            ps = con.prepareStatement(UPDATE_SCHOOL_TOTAL_SPENT);
+            ps.execute();
             con.commit();
         }
         catch ( SQLException e )
@@ -243,6 +253,10 @@ public class Main
 
             ps.execute();
             System.out.println( "insertStudent => " + ps.toString() );
+            con.commit();
+
+            ps = con.prepareStatement(UPDATE_SCHOOL_TOTAL_EARNT);
+            ps.execute();
             con.commit();
         }
         catch ( SQLException e )
